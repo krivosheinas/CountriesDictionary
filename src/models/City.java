@@ -1,9 +1,9 @@
 package models;
 
 import interfaces.IBasic;
-import with.WithName;
+import with.SourceName;
 
-public class City extends WithName implements IBasic {
+public class City extends SourceName implements IBasic {
 
     public int population;
 

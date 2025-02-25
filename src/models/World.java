@@ -1,14 +1,15 @@
 package models;
 
 import interfaces.IBasic;
-import with.WithList;
+import with.SourceList;
 
-public class World extends WithList<Country> implements IBasic {
+public class World implements IBasic {
 
+    public SourceList<Country> countries = new SourceList<>();
     @Override
     public String getString() {
         StringBuilder sb = new StringBuilder();
-        for (var country : this.getSubjects()){
+        for (var country : countries.get()){
             sb.append(country.getString()).append("\n");
         }
         return sb.toString();

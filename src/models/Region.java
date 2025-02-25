@@ -2,16 +2,20 @@ package models;
 
 import enums.RegionType;
 import interfaces.IBasic;
-import with.WithList;
+import with.SourceList;
+import with.SourceName;
 
-public class Region extends WithList<City> implements IBasic {
+public class Region extends SourceName implements IBasic {
 
-    private RegionType regionType;
+    public RegionType regionType;
+
+    public SourceList<City> cities = new SourceList<>();
 
     public Region(String name, RegionType regionType){
         this.name = name;
         this.regionType = regionType;
     }
+
 
     private String getRegionTypeName (){
         return
@@ -32,7 +36,7 @@ public class Region extends WithList<City> implements IBasic {
     public String getString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\tРегион: " + String.format("%s (%s)", name, getRegionTypeName())).append("\n");
-        for (var city : this.getSubjects()) {
+        for (var city : cities.get()) {
             sb.append("\t").append(city.getString()).append("\n");
         }
         return sb.toString();

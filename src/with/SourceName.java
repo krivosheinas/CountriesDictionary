@@ -1,5 +1,5 @@
 package with;
 
-public class WithName {
+public class SourceName {
     public String name;
 }
