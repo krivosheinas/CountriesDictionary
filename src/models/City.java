@@ -3,7 +3,7 @@ package models;
 import interfaces.IBasic;
 import with.SourceName;
 
-public class City extends SourceName implements IBasic {
+public class City extends SourceName {
 
     public int population;
 
@@ -16,5 +16,11 @@ public class City extends SourceName implements IBasic {
     public String getString(){
         return "\tГород: " + name + " (Население: " + String.format("%,d",population) + ")";
     }
+
+    @Override
+    public String convertToString() {
+        return String.format("%s|%s",name,population);
+    }
+
 
 }

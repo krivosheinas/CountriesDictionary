@@ -1,11 +1,10 @@
 package models;
 
 import enums.RegionType;
-import interfaces.IBasic;
 import with.SourceList;
 import with.SourceName;
 
-public class Region extends SourceName implements IBasic {
+public class Region extends SourceName {
 
     public RegionType regionType;
 
@@ -36,10 +35,15 @@ public class Region extends SourceName implements IBasic {
     public String getString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\tРегион: " + String.format("%s (%s)", name, getRegionTypeName())).append("\n");
-        for (var city : cities.get()) {
+        for (var city : cities.all()) {
             sb.append("\t").append(city.getString()).append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public String convertToString() {
+        return String.format("%s|%s",name, regionType.name());
     }
 
 

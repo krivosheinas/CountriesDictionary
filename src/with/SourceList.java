@@ -6,10 +6,23 @@ import java.util.Collections;
 public class SourceList<T extends SourceName> extends SourceName {
 
     private ArrayList<T> source = new ArrayList<>();
-    private ArrayList<T> temp = new ArrayList<>();
 
-    public ArrayList<T> get() {
-        return temp;
+    public ArrayList<T> all() {
+        return source;
+    }
+
+    public T getByIndex(int index){
+        if (source.isEmpty() || source.size() < index + 1){
+            return null;
+        }
+        return source.get(index);
+    }
+
+    public void addByIndex(int index, T subject){
+        if (source.size() < index ){
+            return;
+        }
+        source.add(index, subject);
     }
 
     public void append(T ... subjects){
@@ -29,18 +42,16 @@ public class SourceList<T extends SourceName> extends SourceName {
             return;
         }
         this.source.add(subject);
-        reset();
     }
 
-    public ArrayList<T> find(String condition){
-        this.temp = new ArrayList<>();
-        for (var subject: source) {
-            if (subject.name.indexOf(condition) > -1){
-                this.temp.add(subject);
-            }
-        }
-        return this.get();
-    }
+//    public ArrayList<T> find(String condition){
+//        for (var subject: source) {
+//            if (subject.name.indexOf(condition) > -1){
+//                this.source.add(subject);
+//            }
+//        }
+//        return this.get();
+//    }
 
 
     private void removeFromSource(T subject){
@@ -48,7 +59,6 @@ public class SourceList<T extends SourceName> extends SourceName {
 
             this.source.remove(subject);
         }
-        this.reset();
     }
 
     public void remove(T ... subjects){
@@ -61,19 +71,13 @@ public class SourceList<T extends SourceName> extends SourceName {
     }
 
     public void sortAsc (){
-        Collections.sort(this.temp, (s1, s2) -> s1.name.compareTo(s2.name) );
+        Collections.sort(this.source, (s1, s2) -> s1.name.compareTo(s2.name) );
     }
 
     public void sortDesc (){
-        Collections.sort(this.temp, (s1, s2) -> s2.name.compareTo(s1.name) );
+        Collections.sort(this.source, (s1, s2) -> s2.name.compareTo(s1.name) );
     }
 
-    private void reset (){
-        this.temp = new ArrayList<>();
-        for (var subject: source) {
-            this.temp.add(subject);
-        }
-    }
 
     private Boolean ifExists (String name){
         var isExists = false;

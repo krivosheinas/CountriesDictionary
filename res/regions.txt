@@ -1,0 +1,8 @@
+0|0|Москва|FEDERAL_CITY
+1|0|Санкт-Петербург|FEDERAL_CITY
+2|0|Татарстан|REPUBLIC
+3|0|Саратовская|AREA
+4|0|Ямало-Ненецкий|AUTONOMIC_DISTRICT
+0|1|Нью-йорк|STATE
+1|1|Колумбия|DISTRICT
+2|1|Калифорния|STATE
