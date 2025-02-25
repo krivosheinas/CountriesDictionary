@@ -2,12 +2,14 @@ import common.Files;
 import enums.RegionType;
 import models.*;
 
+import java.io.File;
+
 
 public class Main {
-    public static final String version = "1.2";
-    public static final String countriesPath = "e:\\Projects_Java\\countries.txt";
-    public static final String regionsPath = "e:\\Projects_Java\\regions.txt";
-    public static final String citiesList = "e:\\Projects_Java\\cities.txt";
+    public static final String version = "1.3";
+    public static final String countriesFile = getCurrentDir() + "\\countries.txt";
+    public static final String regionsFile = getCurrentDir() + "\\regions.txt";
+    public static final String citiesFile = getCurrentDir() + "\\cities.txt";
 
     public static World world = new World();
 
@@ -64,17 +66,17 @@ public class Main {
                 regionIndex++;
             }
             countryIndex++;
-            Files.WriteToFile("e:\\Projects_Java\\countries.txt", countiesSb);
-            Files.WriteToFile("e:\\Projects_Java\\regions.txt", regionsSb);
-            Files.WriteToFile("e:\\Projects_Java\\cities.txt", citiesSb);
+            Files.WriteToFile(countriesFile, countiesSb);
+            Files.WriteToFile(regionsFile, regionsSb);
+            Files.WriteToFile(citiesFile, citiesSb);
 
         }
     }
 
     public static void ReadAll(){
-            var countriesList = Files.ReadFromFile("e:\\Projects_Java\\countries.txt");
-            var regionsList = Files.ReadFromFile("e:\\Projects_Java\\regions.txt");
-            var citiesList = Files.ReadFromFile("e:\\Projects_Java\\cities.txt");
+            var countriesList = Files.ReadFromFile(countriesFile);
+            var regionsList = Files.ReadFromFile(regionsFile);
+            var citiesList = Files.ReadFromFile(citiesFile);
 
             for (var countryRow : countriesList){
                 var countryColumns = countryRow.split("\\|");
@@ -130,10 +132,26 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Версия " + version );
+        System.out.println("Текущий каталог: " + getCurrentDir());
         System.out.println("___________________________________________________________________________________________");
+
         //dataInitialize();
         //SaveAll();
         ReadAll();
         printCountries();
     }
+
+    public static String getCurrentDir(){
+        String classPath = Main.class.getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .getPath();
+        File classDir = new File(classPath).getParentFile();
+
+        return classDir.getAbsolutePath();
+    }
+
+
+
+
 }
