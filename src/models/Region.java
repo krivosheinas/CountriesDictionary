@@ -1,14 +1,24 @@
 package models;
 
 import enums.RegionType;
-import interfaces.IBasic;
-import with.WithList;
+import extensions.SourceList;
+import extensions.SourceName;
 
-public class Region extends WithList<City> implements IBasic {
+import java.util.UUID;
 
-    private RegionType regionType;
+public class Region extends SourceName {
+
+    public RegionType regionType;
+
+    public SourceList<City> cities = new SourceList<>();
 
     public Region(String name, RegionType regionType){
+        this.name = name;
+        this.regionType = regionType;
+    }
+
+    public Region(UUID uuid, String name, RegionType regionType){
+        this.uuid = uuid;
         this.name = name;
         this.regionType = regionType;
     }
@@ -32,10 +42,15 @@ public class Region extends WithList<City> implements IBasic {
     public String getString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\tРегион: " + String.format("%s (%s)", name, getRegionTypeName())).append("\n");
-        for (var city : this.getSubjects()) {
+        for (var city : cities.all()) {
             sb.append("\t").append(city.getString()).append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public String convertToString() {
+        return String.format("%s|%s|%s",uuid, name, regionType.name());
     }
 
 

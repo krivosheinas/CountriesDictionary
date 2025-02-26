@@ -9,7 +9,7 @@
 
 В левой панели выберите Artifacts.
 
-Нажмите + (плюс) и выберите JAR > From modules with dependencies.
+Нажмите + (плюс) и выберите JAR > From modules extensions dependencies.
 
 В появившемся окне:
 
