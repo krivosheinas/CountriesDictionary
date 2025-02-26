@@ -10,8 +10,18 @@ public class SourceList<T extends SourceName>  {
         return source;
     }
 
-    public T get (UUID uuid){
+    private boolean ifEmpty(){
+        if (source == null) {
+            return true;
+        }
         if (source.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    public T get (UUID uuid){
+        if (ifEmpty()){
             return null;
         }
         for (var item : source){
@@ -22,9 +32,8 @@ public class SourceList<T extends SourceName>  {
         return null;
     }
 
-
     public T get (int index){
-        if (source.isEmpty()){
+        if (ifEmpty()){
             return null;
         }
 
@@ -45,9 +54,11 @@ public class SourceList<T extends SourceName>  {
     }
 
     private void addToSource (T subject){
-        if (subject == null){
+
+        if (source == null){
             return;
         }
+
         if (ifExists(subject.name)){
             return;
         }
@@ -55,7 +66,8 @@ public class SourceList<T extends SourceName>  {
     }
 
     public ArrayList<T> find (String condition){
-        if (source.isEmpty()){
+
+        if (ifEmpty()){
             return new ArrayList<T>();
         }
 
@@ -69,6 +81,11 @@ public class SourceList<T extends SourceName>  {
     }
 
     private void removeFromSource (T subject){
+
+        if (ifEmpty()){
+            return;
+        }
+
         if (source.contains(subject)){
             source.remove(subject);
         }
@@ -84,28 +101,36 @@ public class SourceList<T extends SourceName>  {
     }
 
     public void sortAsc (){
+        if (ifEmpty()){
+            return;
+        }
         Collections.sort(source, (s1, s2) -> s1.name.compareTo(s2.name) );
     }
 
     public void sortDesc (){
+        if (ifEmpty()){
+            return;
+        }
         Collections.sort(source, (s1, s2) -> s2.name.compareTo(s1.name) );
     }
 
     private Boolean ifExists (String name){
-        var isExists = false;
+        if (ifEmpty()){
+            return false;
+        }
+
         for (var subject: source){
             if (subject.name.equalsIgnoreCase(name)){
-                isExists = true;
-                break;
+                return true;
             }
         }
-        return isExists;
+        return false;
     }
 
     public String pointer() {
         StringBuilder sb = new StringBuilder();
 
-        for (var i=0; i < source.size(); i++){
+        for (var i = 0; i < source.size(); i++){
             sb.append(String.format("%s. %s\n", i + 1, source.get(i).name));
         }
 
