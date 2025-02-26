@@ -1,12 +1,18 @@
 package models;
-import with.SourceList;
-import with.SourceName;
+import extensions.SourceList;
+import extensions.SourceName;
+
+import java.util.UUID;
 
 public class Country extends SourceName {
 
     public SourceList<Region> regions = new SourceList<>();
 
     public Country(String name){
+        this.name = name;
+    }
+    public Country(UUID uuid, String name){
+        this.uuid = uuid;
         this.name = name;
     }
 
@@ -22,6 +28,6 @@ public class Country extends SourceName {
 
     @Override
     public String convertToString() {
-        return name;
+        return String.format("%s|%s",uuid,name);
     }
 }

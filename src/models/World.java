@@ -1,9 +1,9 @@
 package models;
 
-import interfaces.IBasic;
-import with.SourceList;
+import interfaces.ISource;
+import extensions.SourceList;
 
-public class World implements IBasic {
+public class World implements ISource {
 
     public SourceList<Country> countries = new SourceList<>();
     @Override

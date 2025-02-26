@@ -1,6 +1,6 @@
 package interfaces;
 
-public interface IBasic {
+public interface ISource {
     String getString();
 
     String convertToString();

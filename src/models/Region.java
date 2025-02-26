@@ -1,8 +1,10 @@
 package models;
 
 import enums.RegionType;
-import with.SourceList;
-import with.SourceName;
+import extensions.SourceList;
+import extensions.SourceName;
+
+import java.util.UUID;
 
 public class Region extends SourceName {
 
@@ -15,6 +17,11 @@ public class Region extends SourceName {
         this.regionType = regionType;
     }
 
+    public Region(UUID uuid, String name, RegionType regionType){
+        this.uuid = uuid;
+        this.name = name;
+        this.regionType = regionType;
+    }
 
     private String getRegionTypeName (){
         return
@@ -43,7 +50,7 @@ public class Region extends SourceName {
 
     @Override
     public String convertToString() {
-        return String.format("%s|%s",name, regionType.name());
+        return String.format("%s|%s|%s",uuid, name, regionType.name());
     }
 
 

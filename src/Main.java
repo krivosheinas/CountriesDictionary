@@ -3,10 +3,11 @@ import enums.RegionType;
 import models.*;
 
 import java.io.File;
+import java.util.UUID;
 
 
 public class Main {
-    public static final String version = "1.3";
+    public static final String version = "1.4";
     public static final String countriesFile = getCurrentDir() + "\\countries.txt";
     public static final String regionsFile = getCurrentDir() + "\\regions.txt";
     public static final String citiesFile = getCurrentDir() + "\\cities.txt";
@@ -52,20 +53,14 @@ public class Main {
         var countiesSb = new StringBuilder();
         var regionsSb = new StringBuilder();
         var citiesSb = new StringBuilder();
-        var countryIndex = 0;
         for (var country : world.countries.all()){
-            var regionIndex = 0;
-            countiesSb.append(String.format("%s|%s\n",countryIndex,country.convertToString()));
+            countiesSb.append(String.format("%s\n",country.convertToString()));
             for (var region: country.regions.all()) {
-                var cityIndex = 0;
-                regionsSb.append(String.format("%s|%s|%s\n",regionIndex,countryIndex,region.convertToString()));
+                regionsSb.append(String.format("%s|%s\n",country.uuid,region.convertToString()));
                 for (var city: region.cities.all()){
-                   citiesSb.append(String.format("%s|%s|%s|%s\n",cityIndex,regionIndex,countryIndex,city.convertToString()));
-                   cityIndex++;
+                   citiesSb.append(String.format("%s|%s\n",region.uuid,city.convertToString()));
                  }
-                regionIndex++;
             }
-            countryIndex++;
             Files.WriteToFile(countriesFile, countiesSb);
             Files.WriteToFile(regionsFile, regionsSb);
             Files.WriteToFile(citiesFile, citiesSb);
@@ -80,52 +75,54 @@ public class Main {
 
             for (var countryRow : countriesList){
                 var countryColumns = countryRow.split("\\|");
-                var countryIndex = Integer.parseInt(countryColumns[0]);
+                var countryUUID = UUID.fromString(countryColumns[0]);
                 var countryName = countryColumns[1];
-                var country = new Country(countryName);
-                world.countries.addByIndex(countryIndex, country);
+                var country = new Country(countryUUID,countryName);
+                world.countries.append(country);
             }
 
             for (var regionRow : regionsList){
                 var regionColumns = regionRow.split("\\|");
-                var regionIndex = Integer.parseInt(regionColumns[0]);
-                var countryIndex = Integer.parseInt(regionColumns[1]);
+                var countryUUID = UUID.fromString(regionColumns[0]);
+                var regionUUID = UUID.fromString(regionColumns[1]);
                 var regionName = regionColumns[2];
                 var regionType =  RegionType.valueOf(regionColumns[3]);
-                var country = world.countries.getByIndex(countryIndex);
+                var country = world.countries.get(countryUUID);
                 if (country == null) {
                     continue;
                 }
-                var region = new Region(regionName,regionType);
-                country.regions.addByIndex(regionIndex,region);
+                var region = new Region(regionUUID, regionName,regionType);
+                country.regions.append(region);
             }
 
             for (var cityRow : citiesList){
                 var cityColumns = cityRow.split("\\|");
-                var cityIndex =  Integer.parseInt(cityColumns[0]);
-                var regionIndex = Integer.parseInt(cityColumns[1]);
-                var countryIndex = Integer.parseInt(cityColumns[2]);
-                var cityName = cityColumns[3];
+                var regionUUID = UUID.fromString(cityColumns[0]);
+                var cityUUID =  UUID.fromString(cityColumns[1]);
+                var cityName = cityColumns[2];
                 var population = 0;
                 try
                 {
-                    population =  Integer.parseInt(cityColumns[4]);
+                    population =  Integer.parseInt(cityColumns[3]);
                 } catch (NumberFormatException e)  {
                     population = -1;
                 }
 
-                var country = world.countries.getByIndex(countryIndex);
-                if (country ==null){
-                    continue;
+                Region foundRegion = null;
+                for (var country: world.countries.all()){
+                    var region = country.regions.get(regionUUID);
+
+                    if (region !=null){
+                        foundRegion = region;
+                        break;
+                    }
                 }
 
-                var region = country.regions.getByIndex(regionIndex);
-
-                if (region == null){
+                if (foundRegion == null){
                     continue;
                 }
-                var city = new City(cityName, population);
-                region.cities.addByIndex(cityIndex, city);
+                var city = new City(cityUUID,cityName, population);
+                foundRegion.cities.append(city);
             }
     }
 

@@ -1,7 +1,4 @@
 package common;
-import models.Country;
-import with.SourceList;
-import with.SourceName;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +25,9 @@ public class Files {
              var reader = new BufferedReader(isr)) {
              String line;
              while ((line = reader.readLine()) != null) { // Чтение построчно
+                if (line.trim().isEmpty()){
+                    continue;
+                }
                 rows.add(line);
              }
         } catch (IOException e) {

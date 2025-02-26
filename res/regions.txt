@@ -1,8 +1,8 @@
-0|0|Москва|FEDERAL_CITY
-1|0|Санкт-Петербург|FEDERAL_CITY
-2|0|Татарстан|REPUBLIC
-3|0|Саратовская|AREA
-4|0|Ямало-Ненецкий|AUTONOMIC_DISTRICT
-0|1|Нью-йорк|STATE
-1|1|Колумбия|DISTRICT
-2|1|Калифорния|STATE
+0c5f2fb4-29eb-44fc-8141-c6b00c69ee84|1cb21518-7875-4c71-a602-d2c0e9281fd8|Москва|FEDERAL_CITY
+0c5f2fb4-29eb-44fc-8141-c6b00c69ee84|ec9c7b80-1fdb-4d10-ae8e-b224dabce845|Санкт-Петербург|FEDERAL_CITY
+0c5f2fb4-29eb-44fc-8141-c6b00c69ee84|29ae6831-4d17-4f3d-ae9c-c1307832e0eb|Татарстан|REPUBLIC
+0c5f2fb4-29eb-44fc-8141-c6b00c69ee84|cd6e6655-9347-43c2-84c3-977124b25cd8|Саратовская|AREA
+0c5f2fb4-29eb-44fc-8141-c6b00c69ee84|b17cee3c-70fb-4dfe-81fc-d0d6d8a22042|Ямало-Ненецкий|AUTONOMIC_DISTRICT
+acb0d307-1e6f-404d-bb0c-c7ca0af1a6c9|cc442c34-1cb9-4a22-a667-836254be4d76|Нью-йорк|STATE
+acb0d307-1e6f-404d-bb0c-c7ca0af1a6c9|bdc49e9c-bf14-4bff-80dd-db5c43f1c73f|Колумбия|DISTRICT
+acb0d307-1e6f-404d-bb0c-c7ca0af1a6c9|7f4671ac-2238-434f-97c1-f0d3d3b9a792|Калифорния|STATE
