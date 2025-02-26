@@ -4,7 +4,6 @@ import enums.RegionType;
 import models.*;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -73,8 +72,8 @@ public class Main {
             Files.WriteToFile(countriesFile, countiesSb);
             Files.WriteToFile(regionsFile, regionsSb);
             Files.WriteToFile(citiesFile, citiesSb);
-
         }
+        System.out.println("Запись данных выполнена.");
     }
 
     public static void readAllFromFileStorage(){
@@ -135,12 +134,10 @@ public class Main {
             }
     }
 
-
     public static void main(String[] args) {
         System.out.println("Версия " + version );
         System.out.println("Текущий каталог: " + getCurrentDir());
         System.out.println("___________________________________________________________________________________________");
-
         //initLocalStorage();
         //saveAllToFileStorage();
         readAllFromFileStorage();
@@ -165,24 +162,31 @@ public class Main {
             try {
                 printMenu();
                 int choice = scanner.nextInt();
+                scanner.nextLine();
 
                 switch (choice) {
                     case 1:
-                        addItem();
+                        addCountry();
                         break;
                     case 2:
-                        removeItem();
+                        editCountry();
                         break;
                     case 3:
-                        filterItems();
+                        removeCountry();
                         break;
                     case 4:
-                        searchItem();
+                        searchCountry();
                         break;
                     case 5:
-                        displayList();
+                        displayCountry();
                         break;
                     case 6:
+                        displayFullInfo();
+                        break;
+                    case 7:
+                        saveAllToFileStorage();
+                        break;
+                    case 8:
                         System.out.println("Выход из программы.");
                         return;
                     default:
@@ -190,7 +194,6 @@ public class Main {
                 }
 
             }catch (Exception e){
-
                 System.out.println("Неверный выбор. Попробуйте снова.");
             }finally {
                 scanner.nextLine();
@@ -200,72 +203,118 @@ public class Main {
 
     }
 
-
-
-
-
     // Вывод меню
     private static void printMenu() {
-
-
-
         System.out.println("\n--- Меню ---");
-        System.out.println("1. Добавить элемент");
-        System.out.println("2. Удалить элемент");
-        System.out.println("3. Отфильтровать элементы");
-        System.out.println("4. Найти элемент");
-        System.out.println("5. Показать список");
-        System.out.println("6. Выход");
+        System.out.println("1. Добавить страну");
+        System.out.println("2. Редактировать страну");
+        System.out.println("3. Удалить страну");
+        System.out.println("4. Найти");
+        System.out.println("5. Показать список стран");
+        System.out.println("6. Показать полную информацию");
+        System.out.println("7. Выполнить запись данных в файловое хранилище");
+        System.out.println("8. Выход");
         System.out.print("Выберите действие: ");
     }
 
     // Добавление элемента
-    private static void addItem() {
-        System.out.print("Введите элемент для добавления: ");
+    private static void addCountry() {
+        System.out.print("Введите наименование страны: ");
         String item = scanner.nextLine();
-        //list.add(item);
-        System.out.println("Элемент добавлен: " + item);
+        var newUuid = UUID.randomUUID();
+        world.countries.append(new Country(newUuid,item));
+        if (world.countries.get(newUuid) != null){
+            System.out.println("Страна добавлена: " + item);
+        }else {
+            System.out.println("Страна не добавлена");
+        }
+
+    }
+
+    //Редактирование элемента
+    private static void editCountry(){
+        if (world.countries.ifEmpty()){
+            System.out.println("Список стран пуст");
+            return;
+        }
+        System.out.println("Страны:");
+        System.out.println(world.countries.pointer());
+
+        System.out.print("Введите номер для редактирования: ");
+        String item = scanner.nextLine();
+
+        try{
+            var index = Integer.valueOf(item);
+            index--;
+            var country = world.countries.get(index);
+            if (country != null){
+                var name = country.name;
+                System.out.print("Выбрана страна: " + name + ", внесите корректировку в название: ");
+                var newName = scanner.nextLine();
+                country.name = newName;
+                System.out.println("Новое название: " + newName);
+            }else{
+                System.out.println("Не удалось определить страну");
+            }
+
+        } catch (Exception e){
+            System.out.println("Ошибка редактирования: " + e.getMessage());
+        }
     }
 
     // Удаление элемента
-    private static void removeItem() {
-        System.out.print("Введите элемент для удаления: ");
-        String item = scanner.nextLine();
-//        if (list.remove(item)) {
-//            System.out.println("Элемент удален: " + item);
-//        } else {
-//            System.out.println("Элемент не найден: " + item);
-//        }
-    }
+    private static void removeCountry() {
+        if (world.countries.ifEmpty()){
+            System.out.println("Список стран пуст");
+            return;
+        }
+        System.out.println("Страны:");
+        System.out.println(world.countries.pointer());
 
-    // Фильтрация элементов
-    private static void filterItems() {
-        System.out.print("Введите подстроку для фильтрации: ");
-        String filter = scanner.nextLine();
-//        List<String> filteredList = list.stream()
-//                .filter(s -> s.contains(filter))
-//                .collect(Collectors.toList());
-//       System.out.println("Отфильтрованный список: " + filteredList);
+        System.out.print("Введите номер для удаления: ");
+        String item = scanner.nextLine();
+
+        try{
+            var index = Integer.valueOf(item);
+            index--;
+            var country = world.countries.get(index);
+            if (country != null){
+                var id = country.uuid;
+                var name = country.name;
+                world.countries.remove(country);
+
+                if (world.countries.get(id) == null){
+                    System.out.println("Страна удалена: " + name);
+                }
+            }else{
+                System.out.println("Не удалось определить страну");
+            }
+
+        } catch (Exception e){
+            System.out.println("Ошибка удаления: " + e.getMessage());
+        }
     }
 
     // Поиск элемента
-    private static void searchItem() {
+    private static void searchCountry() {
         System.out.print("Введите элемент для поиска: ");
         String item = scanner.nextLine();
-//        if (list.contains(item)) {
-//            System.out.println("Элемент найден: " + item);
-//        } else {
-//            System.out.println("Элемент не найден: " + item);
-//        }
+        var founded = world.countries.find(item);
+        System.out.println("Результат поиска:");
+        if (founded.all().isEmpty()){
+            System.out.println("Ничего не найдено");
+        }else {
+                System.out.println(founded.pointer());
+        }
+    }
+
+    private static void displayCountry(){
+        System.out.println(world.countries.pointer());
     }
 
     // Отображение списка
-    private static void displayList() {
-//        if (list.isEmpty()) {
-//            System.out.println("Список пуст.");
-//        } else {
-//            System.out.println("Текущий список: " + list);
-//        }
+    private static void displayFullInfo() {
+        System.out.println(world.getInfo());
     }
 }
 

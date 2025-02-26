@@ -10,7 +10,7 @@ public class SourceList<T extends SourceName>  {
         return source;
     }
 
-    private boolean ifEmpty(){
+    public boolean ifEmpty(){
         if (source == null) {
             return true;
         }
