@@ -4,13 +4,13 @@ import enums.RegionType;
 import models.*;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 import java.util.UUID;
 
 
 public class Main {
     private static Scanner scanner = new Scanner(System.in);
-
     public static final String version = "1.4";
     public static final String countriesFile = getCurrentDir() + "\\countries.txt";
     public static final String regionsFile = getCurrentDir() + "\\regions.txt";
@@ -135,6 +135,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
+
+        Charset charset = Charset.defaultCharset();
+        System.out.println("Текущая кодировка: " + charset.displayName());
         System.out.println("Версия " + version );
         System.out.println("Текущий каталог: " + getCurrentDir());
         System.out.println("___________________________________________________________________________________________");
@@ -158,7 +161,6 @@ public class Main {
 
     public static void runWorkWithWorld(){
         while (true) {
-
             try {
                 printMenu();
                 int choice = scanner.nextInt();
@@ -198,6 +200,8 @@ public class Main {
             }finally {
                 scanner.nextLine();
             }
+
+
 
         }
 
