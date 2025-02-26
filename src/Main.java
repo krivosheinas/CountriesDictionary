@@ -1,4 +1,5 @@
 import common.Files;
+import common.Helper;
 import enums.RegionType;
 import models.*;
 
@@ -11,10 +12,15 @@ public class Main {
     public static final String countriesFile = getCurrentDir() + "\\countries.txt";
     public static final String regionsFile = getCurrentDir() + "\\regions.txt";
     public static final String citiesFile = getCurrentDir() + "\\cities.txt";
-
     public static World world = new World();
 
-    public static void dataInitialize(){
+    Country countryPointer = null;
+
+    Region regionPointer = null;
+
+    City cityPointer = null;
+
+    public static void initLocalStorage(){
         var russia = new Country("Россия");
         var moscow = new Region("Москва", RegionType.FEDERAL_CITY);
         moscow.cities.append(new City("Москва", 13000000));
@@ -39,26 +45,25 @@ public class Main {
         columbia.cities.append(new City("Вашингтон", 700000));
         var california = new Region("Калифорния", RegionType.STATE);
         california.cities.append(new City("Лос-Анджелес", 4000000));
-
         usa.regions.append(ny,columbia,california);
         world.countries.append(russia);
         world.countries.append(usa);
     }
 
     public static void printCountries(){
-        System.out.println(world.getString());
+        System.out.println(world.getInfo());
     }
 
-    public static void SaveAll(){
+    public static void saveAllToFileStorage(){
         var countiesSb = new StringBuilder();
         var regionsSb = new StringBuilder();
         var citiesSb = new StringBuilder();
         for (var country : world.countries.all()){
-            countiesSb.append(String.format("%s\n",country.convertToString()));
+            countiesSb.append(Helper.unionStrings(country.packedStr())).append("\n");
             for (var region: country.regions.all()) {
-                regionsSb.append(String.format("%s|%s\n",country.uuid,region.convertToString()));
+                regionsSb.append(Helper.unionStrings(country.uuid.toString(),region.packedStr())).append("\n");
                 for (var city: region.cities.all()){
-                   citiesSb.append(String.format("%s|%s\n",region.uuid,city.convertToString()));
+                   citiesSb.append(Helper.unionStrings(region.uuid.toString(),city.packedStr())).append("\n");
                  }
             }
             Files.WriteToFile(countriesFile, countiesSb);
@@ -68,7 +73,7 @@ public class Main {
         }
     }
 
-    public static void ReadAll(){
+    public static void readAllFromFileStorage(){
             var countriesList = Files.ReadFromFile(countriesFile);
             var regionsList = Files.ReadFromFile(regionsFile);
             var citiesList = Files.ReadFromFile(citiesFile);
@@ -132,10 +137,11 @@ public class Main {
         System.out.println("Текущий каталог: " + getCurrentDir());
         System.out.println("___________________________________________________________________________________________");
 
-        //dataInitialize();
-        //SaveAll();
-        ReadAll();
-        printCountries();
+        //initLocalStorage();
+        //saveAllToFileStorage();
+        readAllFromFileStorage();
+      //printCountries();
+        runWorkWithWorld();
     }
 
     public static String getCurrentDir(){
@@ -146,6 +152,26 @@ public class Main {
         File classDir = new File(classPath).getParentFile();
 
         return classDir.getAbsolutePath();
+    }
+
+
+    public static void runWorkWithWorld(){
+
+
+
+        System.out.println(world.countries.pointer());
+
+        for (var c : world.countries.all()){
+            System.out.println(c.regions.pointer());
+
+            for (var r : c.regions.all()){
+                System.out.println(r.cities.pointer());
+            }
+        }
+
+
+
+
     }
 
 

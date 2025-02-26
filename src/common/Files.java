@@ -19,7 +19,9 @@ public class Files {
     }
 
     public static ArrayList<String> ReadFromFile(String filePath){
+
         var rows = new ArrayList<String>();
+
         try (var fis = new FileInputStream(filePath);
              var isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
              var reader = new BufferedReader(isr)) {
@@ -33,6 +35,7 @@ public class Files {
         } catch (IOException e) {
             System.out.println("Ошибка при чтении файла: " + e.getMessage());
         }
+
         return rows;
     }
 

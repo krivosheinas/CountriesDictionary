@@ -1,4 +1,5 @@
 package models;
+import common.Helper;
 import extensions.SourceList;
 import extensions.SourceName;
 
@@ -17,17 +18,23 @@ public class Country extends SourceName {
     }
 
     @Override
-    public String getString() {
+    public String getInfo() {
+
         StringBuilder sb = new StringBuilder();
+
         sb.append("Страна: ").append(name).append("\n");
         for (var region : regions.all()){
-            sb.append(region.getString());
+            sb.append(region.getInfo());
         }
+
         return sb.toString();
     }
 
     @Override
-    public String convertToString() {
-        return String.format("%s|%s",uuid,name);
+    public String packedStr() {
+
+        return Helper.unionStrings(uuid.toString(), name);
+
     }
+
 }

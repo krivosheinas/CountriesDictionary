@@ -5,9 +5,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 public class SourceList<T extends SourceName>  {
-
     private ArrayList<T> source = new ArrayList<>();
-
     public ArrayList<T> all() {
         return source;
     }
@@ -22,6 +20,19 @@ public class SourceList<T extends SourceName>  {
             }
         }
         return null;
+    }
+
+
+    public T get (int index){
+        if (source.isEmpty()){
+            return null;
+        }
+
+        if (source.size() <= index){
+            return null;
+        }
+
+        return source.get(index);
     }
 
     public void append (T ... subjects){
@@ -44,18 +55,21 @@ public class SourceList<T extends SourceName>  {
     }
 
     public ArrayList<T> find (String condition){
-        var findList = new ArrayList<T>();
+        if (source.isEmpty()){
+            return new ArrayList<T>();
+        }
+
+        var foundList = new ArrayList<T>();
         for (var subject: source) {
             if (subject.name.indexOf(condition) > -1){
-                findList.add(subject);
+                foundList.add(subject);
             }
         }
-        return findList;
+        return foundList;
     }
 
     private void removeFromSource (T subject){
         if (source.contains(subject)){
-
             source.remove(subject);
         }
     }
@@ -86,5 +100,15 @@ public class SourceList<T extends SourceName>  {
             }
         }
         return isExists;
+    }
+
+    public String pointer() {
+        StringBuilder sb = new StringBuilder();
+
+        for (var i=0; i < source.size(); i++){
+            sb.append(String.format("%s. %s\n", i + 1, source.get(i).name));
+        }
+
+        return sb.toString();
     }
 }
