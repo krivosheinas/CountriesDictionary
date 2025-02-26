@@ -1,20 +1,29 @@
 import common.Files;
+import common.Helper;
 import enums.RegionType;
 import models.*;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.Scanner;
 import java.util.UUID;
 
 
 public class Main {
+    private static Scanner scanner = new Scanner(System.in);
     public static final String version = "1.4";
     public static final String countriesFile = getCurrentDir() + "\\countries.txt";
     public static final String regionsFile = getCurrentDir() + "\\regions.txt";
     public static final String citiesFile = getCurrentDir() + "\\cities.txt";
-
     public static World world = new World();
 
-    public static void dataInitialize(){
+    Country countryPointer = null;
+
+    Region regionPointer = null;
+
+    City cityPointer = null;
+
+    public static void initLocalStorage(){
         var russia = new Country("Россия");
         var moscow = new Region("Москва", RegionType.FEDERAL_CITY);
         moscow.cities.append(new City("Москва", 13000000));
@@ -39,36 +48,35 @@ public class Main {
         columbia.cities.append(new City("Вашингтон", 700000));
         var california = new Region("Калифорния", RegionType.STATE);
         california.cities.append(new City("Лос-Анджелес", 4000000));
-
         usa.regions.append(ny,columbia,california);
         world.countries.append(russia);
         world.countries.append(usa);
     }
 
     public static void printCountries(){
-        System.out.println(world.getString());
+        System.out.println(world.getInfo());
     }
 
-    public static void SaveAll(){
+    public static void saveAllToFileStorage(){
         var countiesSb = new StringBuilder();
         var regionsSb = new StringBuilder();
         var citiesSb = new StringBuilder();
         for (var country : world.countries.all()){
-            countiesSb.append(String.format("%s\n",country.convertToString()));
+            countiesSb.append(Helper.unionStrings(country.packedStr())).append("\n");
             for (var region: country.regions.all()) {
-                regionsSb.append(String.format("%s|%s\n",country.uuid,region.convertToString()));
+                regionsSb.append(Helper.unionStrings(country.uuid.toString(),region.packedStr())).append("\n");
                 for (var city: region.cities.all()){
-                   citiesSb.append(String.format("%s|%s\n",region.uuid,city.convertToString()));
+                   citiesSb.append(Helper.unionStrings(region.uuid.toString(),city.packedStr())).append("\n");
                  }
             }
             Files.WriteToFile(countriesFile, countiesSb);
             Files.WriteToFile(regionsFile, regionsSb);
             Files.WriteToFile(citiesFile, citiesSb);
-
         }
+        System.out.println("Запись данных выполнена.");
     }
 
-    public static void ReadAll(){
+    public static void readAllFromFileStorage(){
             var countriesList = Files.ReadFromFile(countriesFile);
             var regionsList = Files.ReadFromFile(regionsFile);
             var citiesList = Files.ReadFromFile(citiesFile);
@@ -126,16 +134,18 @@ public class Main {
             }
     }
 
-
     public static void main(String[] args) {
+
+        Charset charset = Charset.defaultCharset();
+        System.out.println("Текущая кодировка: " + charset.displayName());
         System.out.println("Версия " + version );
         System.out.println("Текущий каталог: " + getCurrentDir());
         System.out.println("___________________________________________________________________________________________");
-
-        //dataInitialize();
-        //SaveAll();
-        ReadAll();
-        printCountries();
+        //initLocalStorage();
+        //saveAllToFileStorage();
+        readAllFromFileStorage();
+        //printCountries();
+        runWorkWithWorld();
     }
 
     public static String getCurrentDir(){
@@ -149,6 +159,167 @@ public class Main {
     }
 
 
+    public static void runWorkWithWorld(){
+        while (true) {
+            try {
+                printMenu();
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (choice) {
+                    case 1:
+                        addCountry();
+                        break;
+                    case 2:
+                        editCountry();
+                        break;
+                    case 3:
+                        removeCountry();
+                        break;
+                    case 4:
+                        searchCountry();
+                        break;
+                    case 5:
+                        displayCountry();
+                        break;
+                    case 6:
+                        displayFullInfo();
+                        break;
+                    case 7:
+                        saveAllToFileStorage();
+                        break;
+                    case 8:
+                        System.out.println("Выход из программы.");
+                        return;
+                    default:
+                        System.out.println("Неверный выбор. Попробуйте снова.");
+                }
+
+            }catch (Exception e){
+                System.out.println("Неверный выбор. Попробуйте снова.");
+            }finally {
+                scanner.nextLine();
+            }
 
 
+
+        }
+
+    }
+
+    // Вывод меню
+    private static void printMenu() {
+        System.out.println("\n--- Меню ---");
+        System.out.println("1. Добавить страну");
+        System.out.println("2. Редактировать страну");
+        System.out.println("3. Удалить страну");
+        System.out.println("4. Найти");
+        System.out.println("5. Показать список стран");
+        System.out.println("6. Показать полную информацию");
+        System.out.println("7. Выполнить запись данных в файловое хранилище");
+        System.out.println("8. Выход");
+        System.out.print("Выберите действие: ");
+    }
+
+    // Добавление элемента
+    private static void addCountry() {
+        System.out.print("Введите наименование страны: ");
+        String item = scanner.nextLine();
+        var newUuid = UUID.randomUUID();
+        world.countries.append(new Country(newUuid,item));
+        if (world.countries.get(newUuid) != null){
+            System.out.println("Страна добавлена: " + item);
+        }else {
+            System.out.println("Страна не добавлена");
+        }
+
+    }
+
+    //Редактирование элемента
+    private static void editCountry(){
+        if (world.countries.ifEmpty()){
+            System.out.println("Список стран пуст");
+            return;
+        }
+        System.out.println("Страны:");
+        System.out.println(world.countries.pointer());
+
+        System.out.print("Введите номер для редактирования: ");
+        String item = scanner.nextLine();
+
+        try{
+            var index = Integer.valueOf(item);
+            index--;
+            var country = world.countries.get(index);
+            if (country != null){
+                var name = country.name;
+                System.out.print("Выбрана страна: " + name + ", внесите корректировку в название: ");
+                var newName = scanner.nextLine();
+                country.name = newName;
+                System.out.println("Новое название: " + newName);
+            }else{
+                System.out.println("Не удалось определить страну");
+            }
+
+        } catch (Exception e){
+            System.out.println("Ошибка редактирования: " + e.getMessage());
+        }
+    }
+
+    // Удаление элемента
+    private static void removeCountry() {
+        if (world.countries.ifEmpty()){
+            System.out.println("Список стран пуст");
+            return;
+        }
+        System.out.println("Страны:");
+        System.out.println(world.countries.pointer());
+
+        System.out.print("Введите номер для удаления: ");
+        String item = scanner.nextLine();
+
+        try{
+            var index = Integer.valueOf(item);
+            index--;
+            var country = world.countries.get(index);
+            if (country != null){
+                var id = country.uuid;
+                var name = country.name;
+                world.countries.remove(country);
+
+                if (world.countries.get(id) == null){
+                    System.out.println("Страна удалена: " + name);
+                }
+            }else{
+                System.out.println("Не удалось определить страну");
+            }
+
+        } catch (Exception e){
+            System.out.println("Ошибка удаления: " + e.getMessage());
+        }
+    }
+
+    // Поиск элемента
+    private static void searchCountry() {
+        System.out.print("Введите элемент для поиска: ");
+        String item = scanner.nextLine();
+        var founded = world.countries.find(item);
+        System.out.println("Результат поиска:");
+        if (founded.all().isEmpty()){
+            System.out.println("Ничего не найдено");
+        }else {
+                System.out.println(founded.pointer());
+        }
+    }
+
+    private static void displayCountry(){
+        System.out.println(world.countries.pointer());
+    }
+
+    // Отображение списка
+    private static void displayFullInfo() {
+        System.out.println(world.getInfo());
+    }
 }
+
+

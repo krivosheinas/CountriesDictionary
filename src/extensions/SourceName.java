@@ -8,11 +8,11 @@ public class SourceName implements ISource {
     public String name;
     public UUID uuid = UUID.randomUUID();
 
-    public String getString() {
+    public String getInfo() {
         return null;
     }
 
-    public String convertToString() {
+    public String packedStr() {
         return null;
     }
 }

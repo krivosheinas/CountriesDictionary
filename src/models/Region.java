@@ -1,5 +1,6 @@
 package models;
 
+import common.Helper;
 import enums.RegionType;
 import extensions.SourceList;
 import extensions.SourceName;
@@ -24,6 +25,7 @@ public class Region extends SourceName {
     }
 
     private String getRegionTypeName (){
+
         return
                 switch (regionType){
                     case AREA ->  "Область";
@@ -36,21 +38,27 @@ public class Region extends SourceName {
                     case DISTRICT -> "Округ";
                     default -> "тип региона не определен";
                 };
+
     }
 
     @Override
-    public String getString() {
+    public String getInfo() {
+
         StringBuilder sb = new StringBuilder();
+
         sb.append("\tРегион: " + String.format("%s (%s)", name, getRegionTypeName())).append("\n");
         for (var city : cities.all()) {
-            sb.append("\t").append(city.getString()).append("\n");
+            sb.append("\t").append(city.getInfo()).append("\n");
         }
+
         return sb.toString();
     }
 
     @Override
-    public String convertToString() {
-        return String.format("%s|%s|%s",uuid, name, regionType.name());
+    public String packedStr() {
+
+        return Helper.unionStrings(uuid.toString(), name, regionType.name());
+
     }
 
 

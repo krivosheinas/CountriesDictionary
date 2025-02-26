@@ -5,15 +5,23 @@ import java.util.Collections;
 import java.util.UUID;
 
 public class SourceList<T extends SourceName>  {
-
     private ArrayList<T> source = new ArrayList<>();
-
     public ArrayList<T> all() {
         return source;
     }
 
-    public T get (UUID uuid){
+    public boolean ifEmpty(){
+        if (source == null) {
+            return true;
+        }
         if (source.isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    public T get (UUID uuid){
+        if (ifEmpty()){
             return null;
         }
         for (var item : source){
@@ -22,6 +30,18 @@ public class SourceList<T extends SourceName>  {
             }
         }
         return null;
+    }
+
+    public T get (int index){
+        if (ifEmpty()){
+            return null;
+        }
+
+        if (source.size() <= index){
+            return null;
+        }
+
+        return source.get(index);
     }
 
     public void append (T ... subjects){
@@ -34,28 +54,39 @@ public class SourceList<T extends SourceName>  {
     }
 
     private void addToSource (T subject){
-        if (subject == null){
+
+        if (source == null){
             return;
         }
+
         if (ifExists(subject.name)){
             return;
         }
         source.add(subject);
     }
 
-    public ArrayList<T> find (String condition){
-        var findList = new ArrayList<T>();
+    public SourceList<T> find (String condition){
+
+        if (ifEmpty()){
+            return new SourceList<T>();
+        }
+
+        var sourceList = new SourceList<T>();
         for (var subject: source) {
-            if (subject.name.indexOf(condition) > -1){
-                findList.add(subject);
+            if (subject.name.toLowerCase().contains(condition.toLowerCase())){
+                sourceList.append(subject);
             }
         }
-        return findList;
+        return sourceList;
     }
 
     private void removeFromSource (T subject){
-        if (source.contains(subject)){
 
+        if (ifEmpty()){
+            return;
+        }
+
+        if (source.contains(subject)){
             source.remove(subject);
         }
     }
@@ -70,21 +101,39 @@ public class SourceList<T extends SourceName>  {
     }
 
     public void sortAsc (){
+        if (ifEmpty()){
+            return;
+        }
         Collections.sort(source, (s1, s2) -> s1.name.compareTo(s2.name) );
     }
 
     public void sortDesc (){
+        if (ifEmpty()){
+            return;
+        }
         Collections.sort(source, (s1, s2) -> s2.name.compareTo(s1.name) );
     }
 
     private Boolean ifExists (String name){
-        var isExists = false;
+        if (ifEmpty()){
+            return false;
+        }
+
         for (var subject: source){
             if (subject.name.equalsIgnoreCase(name)){
-                isExists = true;
-                break;
+                return true;
             }
         }
-        return isExists;
+        return false;
+    }
+
+    public String pointer() {
+        StringBuilder sb = new StringBuilder();
+
+        for (var i = 0; i < source.size(); i++){
+            sb.append(String.format("%s. %s\n", i + 1, source.get(i).name));
+        }
+
+        return sb.toString();
     }
 }
