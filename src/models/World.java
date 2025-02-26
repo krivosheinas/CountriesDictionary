@@ -6,6 +6,7 @@ import extensions.SourceList;
 public class World implements ISource {
 
     public SourceList<Country> countries = new SourceList<>();
+
     @Override
     public String getInfo() {
 

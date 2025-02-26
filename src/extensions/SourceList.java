@@ -65,19 +65,19 @@ public class SourceList<T extends SourceName>  {
         source.add(subject);
     }
 
-    public ArrayList<T> find (String condition){
+    public SourceList<T> find (String condition){
 
         if (ifEmpty()){
-            return new ArrayList<T>();
+            return new SourceList<T>();
         }
 
-        var foundList = new ArrayList<T>();
+        var sourceList = new SourceList<T>();
         for (var subject: source) {
-            if (subject.name.indexOf(condition) > -1){
-                foundList.add(subject);
+            if (subject.name.toLowerCase().contains(condition.toLowerCase())){
+                sourceList.append(subject);
             }
         }
-        return foundList;
+        return sourceList;
     }
 
     private void removeFromSource (T subject){

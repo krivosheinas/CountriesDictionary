@@ -5,10 +5,13 @@ import models.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.UUID;
 
 
 public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+
     public static final String version = "1.4";
     public static final String countriesFile = getCurrentDir() + "\\countries.txt";
     public static final String regionsFile = getCurrentDir() + "\\regions.txt";
@@ -141,7 +144,7 @@ public class Main {
         //initLocalStorage();
         //saveAllToFileStorage();
         readAllFromFileStorage();
-      //printCountries();
+        //printCountries();
         runWorkWithWorld();
     }
 
@@ -157,33 +160,113 @@ public class Main {
 
 
     public static void runWorkWithWorld(){
+        while (true) {
 
-        ArrayList<String> arr = null;
+            try {
+                printMenu();
+                int choice = scanner.nextInt();
 
+                switch (choice) {
+                    case 1:
+                        addItem();
+                        break;
+                    case 2:
+                        removeItem();
+                        break;
+                    case 3:
+                        filterItems();
+                        break;
+                    case 4:
+                        searchItem();
+                        break;
+                    case 5:
+                        displayList();
+                        break;
+                    case 6:
+                        System.out.println("Выход из программы.");
+                        return;
+                    default:
+                        System.out.println("Неверный выбор. Попробуйте снова.");
+                }
 
+            }catch (Exception e){
 
-
-
-
-
-
-
-        System.out.println(world.countries.pointer());
-
-        for (var c : world.countries.all()){
-            System.out.println(c.regions.pointer());
-
-            for (var r : c.regions.all()){
-                System.out.println(r.cities.pointer());
+                System.out.println("Неверный выбор. Попробуйте снова.");
+            }finally {
+                scanner.nextLine();
             }
+
         }
-
-
-
 
     }
 
 
 
 
+
+    // Вывод меню
+    private static void printMenu() {
+
+
+
+        System.out.println("\n--- Меню ---");
+        System.out.println("1. Добавить элемент");
+        System.out.println("2. Удалить элемент");
+        System.out.println("3. Отфильтровать элементы");
+        System.out.println("4. Найти элемент");
+        System.out.println("5. Показать список");
+        System.out.println("6. Выход");
+        System.out.print("Выберите действие: ");
+    }
+
+    // Добавление элемента
+    private static void addItem() {
+        System.out.print("Введите элемент для добавления: ");
+        String item = scanner.nextLine();
+        //list.add(item);
+        System.out.println("Элемент добавлен: " + item);
+    }
+
+    // Удаление элемента
+    private static void removeItem() {
+        System.out.print("Введите элемент для удаления: ");
+        String item = scanner.nextLine();
+//        if (list.remove(item)) {
+//            System.out.println("Элемент удален: " + item);
+//        } else {
+//            System.out.println("Элемент не найден: " + item);
+//        }
+    }
+
+    // Фильтрация элементов
+    private static void filterItems() {
+        System.out.print("Введите подстроку для фильтрации: ");
+        String filter = scanner.nextLine();
+//        List<String> filteredList = list.stream()
+//                .filter(s -> s.contains(filter))
+//                .collect(Collectors.toList());
+//       System.out.println("Отфильтрованный список: " + filteredList);
+    }
+
+    // Поиск элемента
+    private static void searchItem() {
+        System.out.print("Введите элемент для поиска: ");
+        String item = scanner.nextLine();
+//        if (list.contains(item)) {
+//            System.out.println("Элемент найден: " + item);
+//        } else {
+//            System.out.println("Элемент не найден: " + item);
+//        }
+    }
+
+    // Отображение списка
+    private static void displayList() {
+//        if (list.isEmpty()) {
+//            System.out.println("Список пуст.");
+//        } else {
+//            System.out.println("Текущий список: " + list);
+//        }
+    }
 }
+
+
