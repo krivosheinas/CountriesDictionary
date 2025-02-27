@@ -10,21 +10,15 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class Main {
-    private static Scanner scanner = new Scanner(System.in);
-
-    public static final String version = "1.4";
+    private static final Scanner scanner = new Scanner(System.in);
     public static final String countriesFile = getCurrentDir() + "\\countries.txt";
     public static final String regionsFile = getCurrentDir() + "\\regions.txt";
     public static final String citiesFile = getCurrentDir() + "\\cities.txt";
     public static World world = new World();
-
     public static Country countryPointer = null;
-
     public static Region regionPointer = null;
 
-    public static City cityPointer = null;
-
-
+    public static boolean isBreakLevel = false;
 
 
     public static void initLocalStorage(){
@@ -56,11 +50,6 @@ public class Main {
         world.countries.append(russia);
         world.countries.append(usa);
     }
-
-    public static void printCountries(){
-        System.out.println(world.getInfo());
-    }
-
     /**
      * Сохранение информации о внесенных странах, регионах и городах из памяти в файловое хранилище
      */
@@ -145,25 +134,16 @@ public class Main {
 
     /**
      * Главный метод программы
-     * @param args
+     * @param args Аргументы программы
      */
     public static void main(String[] args) {
-
-//        Charset charset = Charset.defaultCharset();
-//        System.out.println("Текущая кодировка: " + charset.displayName());
-//        System.out.println("Версия " + version );
-//        System.out.println("Текущий каталог: " + getCurrentDir());
-//        System.out.println("___________________________________________________________________________________________");
-//        initLocalStorage();
-//        saveAllToFileStorage();
           readAllFromFileStorage();
-//        //printCountries();
-          showCountryLevel();
+          countryActions();
     }
 
     /**
      * Функция получения текущей директории исполняемого файла
-     * @return
+     * @return Полный путь до текущего каталога
      */
     public static String getCurrentDir(){
         String classPath = Main.class.getProtectionDomain()
@@ -179,13 +159,13 @@ public class Main {
      * Вывод меню уровня Страны
      */
     private static void printCountryMenu() {
-        System.out.println("\n--- Страны. Меню ---");
+        System.out.println("\n***** Страны. Главное меню *****");
         System.out.println("1. Добавить страну");
         System.out.println("2. Редактировать страну");
         System.out.println("3. Удалить страну");
         System.out.println("4. Найти");
         System.out.println("5. Показать список стран");
-        System.out.println("6. Показать полную информацию по странам и регионам");
+        System.out.println("6. Показать детализированную информацию по странам и регионам");
         System.out.println("7. Выполнить запись данных в файловое хранилище");
         System.out.println("8. Выход");
         System.out.print("Выберите действие: ");
@@ -194,42 +174,29 @@ public class Main {
     /**
      * Вывести меню действий для уровня Страны
      */
-    public static void showCountryLevel(){
+    public static void countryActions(){
         while (true) {
+            isBreakLevel = false;
+            countryPointer = null;
+            regionPointer = null;
             try {
                 printCountryMenu();
                 int choice = scanner.nextInt();
                 scanner.nextLine();
-
                 switch (choice) {
-                    case 1:
-                        addCountry();
-                        break;
-                    case 2:
-                        editCountry();
-                        break;
-                    case 3:
-                        removeCountry();
-                        break;
-                    case 4:
-                        searchCountry();
-                        break;
-                    case 5:
-                        displayPreview(SourceType.Country);
-                        break;
-                    case 6:
-                        displayInfo(SourceType.Country);
-                        break;
-                    case 7:
-                        saveAllToFileStorage();
-                        break;
-                    case 8:
+                    case 1 -> addCountry();
+                    case 2 -> editCountry();
+                    case 3 -> removeCountry();
+                    case 4 -> searchCountry();
+                    case 5 -> displayPreview(SourceType.Country);
+                    case 6 -> displayInfo(SourceType.Country);
+                    case 7 -> saveAllToFileStorage();
+                    case 8 -> {
                         System.out.println("Выход из программы.");
                         return;
-                    default:
-                        System.out.println("Неверный выбор. Попробуйте снова.");
+                    }
+                    default -> System.out.println("Неверный выбор. Попробуйте снова.");
                 }
-
             }catch (Exception e){
                 System.out.println("Неверный выбор. Попробуйте снова.");
                 scanner.nextLine();
@@ -241,57 +208,50 @@ public class Main {
      * Вывод меню уровня Регионы
      */
     private static void printRegionMenu() {
-        System.out.println("\n--- Страна " + countryPointer.name + ". Редактирование ---");
+        System.out.println("\n***** Режим редактирования страны *****");
+        System.out.println("Текущая страна: " + countryPointer.name);
         System.out.println("1. Изменить название страны");
         System.out.println("2. Добавить регион");
         System.out.println("3. Редактировать регион");
         System.out.println("4. Удалить регион");
-        System.out.println("5. Вывести список регионов страны");
-        System.out.println("6. Вывести полную информацию по регионам страны");
-        System.out.println("7. Переход на уровень Страны");
+        System.out.println("5. Вывести список регионов текущей страны");
+        System.out.println("6. Вывести детализированную информацию по регионам текущей страны");
+        System.out.println("7. Переход в Главное меню");
         System.out.print("Выберите действие: ");
     }
 
     /**
      * Выводит меню действий для уровня Регионы
      */
-    public static void showRegionLevel(){
+    public static void regionActions(){
         while (true) {
+            regionPointer = null;
             try {
                 printRegionMenu();
                 int choice = scanner.nextInt();
                 scanner.nextLine();
 
                 switch (choice) {
-                    case 1:
-                        changeCountry();
-                        break;
-                    case 2:
-                        addRegion();
-                        break;
-                    case 3:
-                        changeRegion();
-                         break;
-                    case 4:
-                        removeRegion();
-                        break;
-                    case 5:
-                        displayPreview(SourceType.Region);
-                        break;
-                    case 6:
-                        displayInfo(SourceType.Region);
-                        break;
-                    case 7:
-                        System.out.println("Переход на уровень Страны.");
+                    case 1 -> changeCountry();
+                    case 2 -> addRegion();
+                    case 3 -> editRegion();
+                    case 4 -> removeRegion();
+                    case 5 -> displayPreview(SourceType.Region);
+                    case 6 -> displayInfo(SourceType.Region);
+                    case 7 -> {
+                        System.out.println("Переход в Главное меню");
                         return;
-                    default:
-                        System.out.println("Неверный выбор. Попробуйте снова.");
+                    }
+                    default -> System.out.println("Неверный выбор. Попробуйте снова.");
                 }
 
             }catch (Exception e){
                 System.out.println("Неверный выбор. Попробуйте снова.");
-            }finally {
                 scanner.nextLine();
+            }
+
+            if (isBreakLevel){
+                return;
             }
         }
     }
@@ -300,56 +260,46 @@ public class Main {
      * Вывод меню уровня Города
      */
     private static void printCityMenu() {
-        System.out.println("\n--- Редактирование ---");
-        System.out.println("1. Изменить название");
+        System.out.println("\n***** Режим редактирования региона *****");
+        System.out.println("Текущий регион: " + regionPointer.name);
+        System.out.println("1. Изменить названи региона");
         System.out.println("2. Добавить город");
         System.out.println("3. Редактировать город");
-        System.out.println("4. Удалить регион");
-        System.out.println("5. Вывести список городов");
-        System.out.println("6. Вывести полную информацию по городам региона");
-        System.out.println("7. Отмена");
+        System.out.println("4. Удалить город");
+        System.out.println("5. Вывести список городов текущего региона");
+        System.out.println("6. Вывести детализированную информацию по городам текущего региона");
+        System.out.println("7. Переход на предыдущий уровень");
+        System.out.println("8. Переход в Главное меню");
         System.out.print("Выберите действие: ");
     }
 
     /**
      * Выводит меню действий для уровня Города
      */
-    public static void showCityLevel(){
+    public static void cityActions(){
         while (true) {
             try {
-                printRegionMenu();
+                printCityMenu();
                 int choice = scanner.nextInt();
                 scanner.nextLine();
-
                 switch (choice) {
-//                    case 1:
-//                        addCountry();
-//                        break;
-//                    case 2:
-//                        editCountry();
-//                        break;
-//                    case 3:
-//                        removeCountry();
-//                        break;
-//                    case 4:
-//                        searchCountry();
-//                        break;
-//                    case 5:
-//                        displayCountry();
-//                        break;
-//                    case 6:
-//                        displayFullInfo();
-//                        break;
-//                    case 7:
-//                        saveAllToFileStorage();
-//                        break;
-                    case 8:
-                        System.out.println("Выход из программы.");
+                    case 1 -> changeRegion();
+                    case 2 -> addCity();
+                    case 3 -> editCity();
+                    case 4 -> removeCity();
+                    case 5 -> displayPreview(SourceType.City);
+                    case 6 -> displayInfo(SourceType.City);
+                    case 7 -> {
+                        System.out.println("Переход на предыдущий уровень.");
                         return;
-                    default:
-                        System.out.println("Неверный выбор. Попробуйте снова.");
+                    }
+                    case 8 -> {
+                        System.out.println("Переход в Главное меню");
+                        isBreakLevel = true;
+                        return;
+                    }
+                    default -> System.out.println("Неверный выбор. Попробуйте снова.");
                 }
-
             }catch (Exception e){
                 System.out.println("Неверный выбор. Попробуйте снова.");
                 scanner.nextLine();
@@ -362,17 +312,15 @@ public class Main {
      */
     private static void addCountry() {
         System.out.print("Введите наименование страны: ");
-        String item = scanner.nextLine();
-        var newUuid = UUID.randomUUID();
-        world.countries.append(new Country(newUuid,item));
-        if (world.countries.get(newUuid) != null){
-            System.out.println("Страна добавлена: " + item);
+        String name = scanner.nextLine();
+        var uuid = UUID.randomUUID();
+        world.countries.append(new Country(uuid,name));
+        if (world.countries.get(uuid) != null){
+            System.out.println("Страна добавлена: " + name);
         }else {
             System.out.println("Страна не добавлена");
         }
-
     }
-
 
     /**
      * Добавление нового Региона
@@ -381,42 +329,180 @@ public class Main {
         if (countryPointer == null){
             System.out.println("Страна не выбрана");
         }
-
         System.out.print("Введите наименование региона: ");
-        String item = scanner.nextLine();
-        var newUuid = UUID.randomUUID();
-        countryPointer.regions.append(new Region(newUuid,item));
-        if (countryPointer.regions.get(newUuid) != null){
-            System.out.println("Регион добавлен: " + item);
+        String name = scanner.nextLine();
+        var uuid = UUID.randomUUID();
+        countryPointer.regions.append(new Region(uuid,name));
+        if (countryPointer.regions.get(uuid) != null){
+            System.out.println("Регион добавлен: " + name);
         }else {
             System.out.println("Регион не добавлен");
         }
     }
 
-    private static void editRegion(){
-
+    /**
+     * Добавление нового Города
+     */
+    private static void addCity() {
+        if (regionPointer == null){
+            System.out.println("Регион не выбран");
+        }
+        System.out.print("Введите наименование города: ");
+        String name = scanner.nextLine();
+        var population = 0;
+        while (true){
+            System.out.print("Введите численность населения: ");
+            try{
+                population = scanner.nextInt();
+                break;
+            }catch (Exception e){
+                System.out.println("Введено некорректное значение");
+                scanner.nextLine();
+            }
+        }
+        var uuid = UUID.randomUUID();
+        regionPointer.cities.append(new City(uuid, name, population));
+        if (regionPointer.cities.get(uuid) != null){
+            System.out.println("Город добавлен: " + name);
+        }else {
+            System.out.println("Город не добавлен");
+        }
     }
 
-    private static void removeRegion(){
-
+    /**
+     * Комплексное дедактирование Региона
+     */
+    private static void editRegion(){
         if (countryPointer == null){
             System.out.println("Страна не выбрана");
         }
+        previewList(countryPointer.regions, "Регионы");
+        if (countryPointer.regions.all().isEmpty()){
+            return;
+        }
+        System.out.print("Введите номер для редактирования: ");
+        String item = scanner.nextLine();
+        try{
+            var index = Integer.parseInt(item);
+            index--;
+            var region = countryPointer.regions.get(index);
+            if (region != null){
 
-        previewList(countryPointer.regions, "Страны");
+                regionPointer = region;
+                cityActions();
+            }else{
+                System.out.println("Не удалось определить регион");
+            }
+        } catch (Exception e){
+            System.out.println("Ошибка редактирования: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Редактирование информации о городе
+     */
+    public static void editCity(){
+        if (regionPointer == null){
+            System.out.println("Регион не выбран");
+        }
+
+        previewList(regionPointer.cities, "Города");
+
+        if (regionPointer.cities.all().isEmpty()){
+            return;
+        }
+
+        System.out.print("Введите номер для редактирования: ");
+        String item = scanner.nextLine();
+
+        try{
+            var index = Integer.parseInt(item);
+            index--;
+            var city = regionPointer.cities.get(index);
+            if (city != null){
+                System.out.print("Введите наименование города: ");
+                String newName = scanner.nextLine();
+                var newPopulation = 0;
+                while (true){
+                    System.out.print("Введите численность населения: ");
+                    try{
+
+                        newPopulation = scanner.nextInt();
+                        break;
+                    }catch (Exception e){
+                        System.out.println("Введено некорректное значение");
+                        scanner.nextLine();
+                    }
+                }
+                city.Edit(newName,newPopulation);
+            }else{
+                System.out.println("Не удалось определить город");
+            }
+
+        } catch (Exception e){
+            System.out.println("Ошибка удаления: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Удаление города
+     */
+    private static void removeCity(){
+        if (regionPointer == null){
+            System.out.println("Регион не выбран");
+        }
+
+        previewList(regionPointer.cities, "Города");
+
+        if (regionPointer.cities.all().isEmpty()){
+            return;
+        }
+
         System.out.print("Введите номер для удаления: ");
         String item = scanner.nextLine();
 
         try{
-            var index = Integer.valueOf(item);
+            var index = Integer.parseInt(item);
+            index--;
+            var city = regionPointer.cities.get(index);
+            if (city != null){
+                var uuid = city.uuid;
+                var name = city.name;
+                regionPointer.cities.remove(city);
+                if (regionPointer.cities.get(uuid) == null){
+                    System.out.println("Город удален: " + name);
+                }
+            }else{
+                System.out.println("Не удалось определить город");
+            }
+
+        } catch (Exception e){
+            System.out.println("Ошибка удаления: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Удаление региона
+     */
+    private static void removeRegion(){
+        if (countryPointer == null){
+            System.out.println("Страна не выбрана");
+        }
+        previewList(countryPointer.regions, "Регионы");
+        if (countryPointer.regions.all().isEmpty()){
+            return;
+        }
+        System.out.print("Введите номер для удаления: ");
+        String item = scanner.nextLine();
+        try{
+            var index = Integer.parseInt(item);
             index--;
             var region = countryPointer.regions.get(index);
             if (region != null){
-                var id = region.uuid;
+                var uuid = region.uuid;
                 var name = region.name;
                 countryPointer.regions.remove(region);
-
-                if (countryPointer.regions.get(id) == null){
+                if (countryPointer.regions.get(uuid) == null){
                     System.out.println("Регион удален: " + name);
                 }
             }else{
@@ -428,20 +514,19 @@ public class Main {
         }
     }
 
+    /**
+     * Изменение Региона
+     */
     private static void changeRegion(){
-
+        System.out.print("Введите изменение в название: ");
+        String item = scanner.nextLine();
+        regionPointer.name = item;
+        System.out.println("Новое название региона: " + item);
     }
 
-    private static <T extends SourceName> void previewList (SourceList<T> sourceList, String sourceName){
-        if (sourceList.ifEmpty()){
-            System.out.println("Список пуст");
-            return;
-        }
-        System.out.println(sourceName + ":");
-        System.out.println(sourceList.pointer());
-    }
-
-
+    /**
+     * Изменение СТраны
+     */
     private static void changeCountry(){
         System.out.print("Введите изменение в название: ");
         String item = scanner.nextLine();
@@ -449,22 +534,23 @@ public class Main {
         System.out.println("Новое название страны: " + item);
     }
 
-
-    //Редактирование элемента
+    /**
+     * Комплексное редактирование Страны
+     */
     private static void editCountry(){
         previewList(world.countries, "Страны");
+        if (world.countries.all().isEmpty()){
+            return;
+        }
         System.out.print("Введите номер для редактирования: ");
         String item = scanner.nextLine();
-
         try{
-            var index = Integer.valueOf(item);
+            var index = Integer.parseInt(item);
             index--;
             var country = world.countries.get(index);
             if (country != null){
-
                 countryPointer = country;
-                System.out.print("Выбрана страна: " + country.name);
-                showRegionLevel();
+                regionActions();
             }else{
                 System.out.println("Не удалось определить страну");
             }
@@ -473,34 +559,38 @@ public class Main {
         }
     }
 
-    // Удаление элемента
+    /**
+     * Удаление Страны
+     */
     private static void removeCountry() {
         previewList(world.countries, "Страны");
+        if (world.countries.all().isEmpty()){
+            return;
+        }
         System.out.print("Введите номер для удаления: ");
         String item = scanner.nextLine();
-
         try{
-            var index = Integer.valueOf(item);
+            var index = Integer.parseInt(item);
             index--;
             var country = world.countries.get(index);
             if (country != null){
-                var id = country.uuid;
+                var uuid = country.uuid;
                 var name = country.name;
                 world.countries.remove(country);
-
-                if (world.countries.get(id) == null){
+                if (world.countries.get(uuid) == null){
                     System.out.println("Страна удалена: " + name);
                 }
             }else{
                 System.out.println("Не удалось определить страну");
             }
-
         } catch (Exception e){
             System.out.println("Ошибка удаления: " + e.getMessage());
         }
     }
 
-    // Поиск элемента
+    /**
+     * Поиск стран
+     */
     private static void searchCountry() {
         System.out.print("Введите элемент для поиска: ");
         String item = scanner.nextLine();
@@ -513,45 +603,51 @@ public class Main {
         }
     }
 
+
     private static void displayPreview(SourceType sourceType){
-        switch (sourceType){
-            case Country:
-                previewList(world.countries, "Страны");
-                break;
-            case Region:
-                if (countryPointer == null){
+        switch (sourceType) {
+            case Country -> previewList(world.countries, "Страны");
+            case Region -> {
+                if (countryPointer == null) {
                     break;
                 }
                 previewList(countryPointer.regions, "Регионы");
-                break;
-            case City:
-                if (regionPointer == null){
+            }
+            case City -> {
+                if (regionPointer == null) {
                     break;
                 }
                 previewList(regionPointer.cities, "Города");
-                break;
+            }
         }
     }
 
     // Отображение списка
     private static void displayInfo(SourceType sourceType) {
-        switch (sourceType){
-            case Country:
-                System.out.println(world.getInfo());
-                break;
-            case Region:
-                if (countryPointer == null){
+        switch (sourceType) {
+            case Country -> System.out.println(world.getInfo());
+            case Region -> {
+                if (countryPointer == null) {
                     break;
                 }
                 System.out.println(countryPointer.getInfo());
-                return;
-            case City:
-                if (regionPointer == null){
+            }
+            case City -> {
+                if (regionPointer == null) {
                     break;
                 }
                 System.out.println(regionPointer.getInfo());
-                break;
+            }
         }
+    }
+
+    private static <T extends SourceName> void previewList (SourceList<T> sourceList, String sourceName){
+        if (sourceList.ifEmpty()){
+            System.out.println("Список пуст");
+            return;
+        }
+        System.out.println(sourceName + ":");
+        System.out.println(sourceList.pointer());
     }
 }
 
