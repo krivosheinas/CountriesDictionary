@@ -31,3 +31,4 @@
 Запуск программы java -jar CountriesDictionary.jar
 
 Для проблем с кодировкой запускать java -Dfile.encoding=Cp866 -jar countriesdictionary.jar 
+файлы данных из папки res положить в каталог с файлом запуска countriesdictionary.jar, чтобы при запускее программу загрузиились данные из файла
