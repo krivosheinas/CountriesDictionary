@@ -1,6 +1,6 @@
 package models;
 
-import enums.RegionType;
+import common.Helper;
 import extensions.SourceList;
 import extensions.SourceName;
 
@@ -8,49 +8,38 @@ import java.util.UUID;
 
 public class Region extends SourceName {
 
-    public RegionType regionType;
-
     public SourceList<City> cities = new SourceList<>();
 
-    public Region(String name, RegionType regionType){
+    public Region(String name){
         this.name = name;
-        this.regionType = regionType;
     }
 
-    public Region(UUID uuid, String name, RegionType regionType){
+    public Region(UUID uuid, String name){
         this.uuid = uuid;
         this.name = name;
-        this.regionType = regionType;
     }
-
-    private String getRegionTypeName (){
-        return
-                switch (regionType){
-                    case AREA ->  "Область";
-                    case REGION ->  "Край";
-                    case REPUBLIC ->  "Республика";
-                    case AUTONOMIC_AREA ->  "Автономная область";
-                    case AUTONOMIC_DISTRICT -> "Автономный округ";
-                    case FEDERAL_CITY -> "Город федерального значения";
-                    case STATE -> "Штат";
-                    case DISTRICT -> "Округ";
-                    default -> "тип региона не определен";
-                };
+    public  void Edit(String name){
+        this.name = name;
     }
 
     @Override
-    public String getString() {
+    public String getInfo() {
+
         StringBuilder sb = new StringBuilder();
-        sb.append("\tРегион: " + String.format("%s (%s)", name, getRegionTypeName())).append("\n");
+
+        sb.append("\tРегион: " + name).append("\n");
         for (var city : cities.all()) {
-            sb.append("\t").append(city.getString()).append("\n");
+            sb.append("\t").append(city.getInfo()).append("\n");
         }
+
         return sb.toString();
     }
 
     @Override
-    public String convertToString() {
-        return String.format("%s|%s|%s",uuid, name, regionType.name());
+    public String packedStr() {
+
+        return Helper.unionStrings(uuid.toString(), name);
+
     }
 
 

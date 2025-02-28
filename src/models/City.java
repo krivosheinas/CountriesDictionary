@@ -1,5 +1,6 @@
 package models;
 
+import common.Helper;
 import extensions.SourceName;
 
 import java.util.UUID;
@@ -19,14 +20,23 @@ public class City extends SourceName {
         this.population = population;
     }
 
-    @Override
-    public String getString(){
-        return "\tГород: " + name + " (Население: " + String.format("%,d",population) + ")";
+    public  void Edit(String name, int population){
+        this.name = name;
+        this.population = population;
     }
 
     @Override
-    public String convertToString() {
-        return String.format("%s|%s|%s", uuid, name,population);
+    public String getInfo(){
+
+        return "\tГород: " + name + " (Население: " + String.format("%,d",population) + ")";
+
+    }
+
+    @Override
+    public String packedStr() {
+
+        return Helper.unionStrings(uuid.toString(), name, String.valueOf(population));
+
     }
 
 

@@ -6,17 +6,23 @@ import extensions.SourceList;
 public class World implements ISource {
 
     public SourceList<Country> countries = new SourceList<>();
+
     @Override
-    public String getString() {
+    public String getInfo() {
+
         StringBuilder sb = new StringBuilder();
         for (var country : countries.all()){
-            sb.append(country.getString()).append("\n");
+            sb.append(country.getInfo()).append("\n");
         }
+
         return sb.toString();
     }
 
     @Override
-    public String convertToString() {
+    public String packedStr() {
+
         return null;
+
     }
+
 }

@@ -29,3 +29,5 @@
 
 
 Запуск программы java -jar CountriesDictionary.jar
+
+Для проблем с кодировкой запускать java -Dfile.encoding=Cp866 -jar countriesdictionary.jar 
