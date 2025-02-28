@@ -18,6 +18,9 @@ public class Region extends SourceName {
         this.uuid = uuid;
         this.name = name;
     }
+    public  void Edit(String name){
+        this.name = name;
+    }
 
     @Override
     public String getInfo() {

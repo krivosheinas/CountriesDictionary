@@ -11,7 +11,6 @@ public class World implements ISource {
     public String getInfo() {
 
         StringBuilder sb = new StringBuilder();
-
         for (var country : countries.all()){
             sb.append(country.getInfo()).append("\n");
         }

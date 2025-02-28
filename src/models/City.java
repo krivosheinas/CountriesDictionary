@@ -20,6 +20,11 @@ public class City extends SourceName {
         this.population = population;
     }
 
+    public  void Edit(String name, int population){
+        this.name = name;
+        this.population = population;
+    }
+
     @Override
     public String getInfo(){
 

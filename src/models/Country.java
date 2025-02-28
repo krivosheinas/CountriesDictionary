@@ -17,6 +17,10 @@ public class Country extends SourceName {
         this.name = name;
     }
 
+    public  void Edit(String name){
+        this.name = name;
+    }
+
     @Override
     public String getInfo() {
 

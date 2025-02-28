@@ -17,8 +17,7 @@ public class Main {
     public static World world = new World();
     public static Country countryPointer = null;
     public static Region regionPointer = null;
-
-    public static boolean isBreakLevel = false;
+    public static boolean isNeedToLoadMainMenu = false;
 
 
     public static void initLocalStorage(){
@@ -176,7 +175,7 @@ public class Main {
      */
     public static void countryActions(){
         while (true) {
-            isBreakLevel = false;
+            isNeedToLoadMainMenu = false;
             countryPointer = null;
             regionPointer = null;
             try {
@@ -250,7 +249,7 @@ public class Main {
                 scanner.nextLine();
             }
 
-            if (isBreakLevel){
+            if (isNeedToLoadMainMenu){
                 return;
             }
         }
@@ -262,7 +261,7 @@ public class Main {
     private static void printCityMenu() {
         System.out.println("\n***** Режим редактирования региона *****");
         System.out.println("Текущий регион: " + regionPointer.name);
-        System.out.println("1. Изменить названи региона");
+        System.out.println("1. Изменить название региона");
         System.out.println("2. Добавить город");
         System.out.println("3. Редактировать город");
         System.out.println("4. Удалить город");
@@ -295,7 +294,7 @@ public class Main {
                     }
                     case 8 -> {
                         System.out.println("Переход в Главное меню");
-                        isBreakLevel = true;
+                        isNeedToLoadMainMenu = true;
                         return;
                     }
                     default -> System.out.println("Неверный выбор. Попробуйте снова.");
@@ -311,7 +310,7 @@ public class Main {
      * Добавление новой Страны
      */
     private static void addCountry() {
-        System.out.print("Введите наименование страны: ");
+        System.out.print("Введите название страны: ");
         String name = scanner.nextLine();
         var uuid = UUID.randomUUID();
         world.countries.append(new Country(uuid,name));
@@ -329,7 +328,7 @@ public class Main {
         if (countryPointer == null){
             System.out.println("Страна не выбрана");
         }
-        System.out.print("Введите наименование региона: ");
+        System.out.print("Введите название региона: ");
         String name = scanner.nextLine();
         var uuid = UUID.randomUUID();
         countryPointer.regions.append(new Region(uuid,name));
@@ -347,7 +346,7 @@ public class Main {
         if (regionPointer == null){
             System.out.println("Регион не выбран");
         }
-        System.out.print("Введите наименование города: ");
+        System.out.print("Введите название города: ");
         String name = scanner.nextLine();
         var population = 0;
         while (true){
@@ -420,7 +419,7 @@ public class Main {
             index--;
             var city = regionPointer.cities.get(index);
             if (city != null){
-                System.out.print("Введите наименование города: ");
+                System.out.print("Введите новое название города: ");
                 String newName = scanner.nextLine();
                 var newPopulation = 0;
                 while (true){
@@ -468,6 +467,15 @@ public class Main {
             if (city != null){
                 var uuid = city.uuid;
                 var name = city.name;
+
+                System.out.println("Город "+ name + " будет удален, для подтверждения введите Y/y");
+                var choise = scanner.nextLine();
+
+                if (!choise.equalsIgnoreCase("y")){
+                    System.out.println("Отмена операции удаления");
+                    return;
+                }
+
                 regionPointer.cities.remove(city);
                 if (regionPointer.cities.get(uuid) == null){
                     System.out.println("Город удален: " + name);
@@ -501,6 +509,15 @@ public class Main {
             if (region != null){
                 var uuid = region.uuid;
                 var name = region.name;
+
+                System.out.println("Регион "+ name + " будет удален, для подтверждения введите Y/y");
+                var choise = scanner.nextLine();
+
+                if (!choise.equalsIgnoreCase("y")){
+                    System.out.println("Отмена операции удаления");
+                    return;
+                }
+
                 countryPointer.regions.remove(region);
                 if (countryPointer.regions.get(uuid) == null){
                     System.out.println("Регион удален: " + name);
@@ -518,7 +535,7 @@ public class Main {
      * Изменение Региона
      */
     private static void changeRegion(){
-        System.out.print("Введите изменение в название: ");
+        System.out.print("Введите новое название: ");
         String item = scanner.nextLine();
         regionPointer.name = item;
         System.out.println("Новое название региона: " + item);
@@ -528,7 +545,7 @@ public class Main {
      * Изменение СТраны
      */
     private static void changeCountry(){
-        System.out.print("Введите изменение в название: ");
+        System.out.print("Введите новое название: ");
         String item = scanner.nextLine();
         countryPointer.name = item;
         System.out.println("Новое название страны: " + item);
@@ -576,6 +593,15 @@ public class Main {
             if (country != null){
                 var uuid = country.uuid;
                 var name = country.name;
+
+                System.out.println("Страна "+ name + " будет удалена, для подтверждения введите Y/y");
+                var choise = scanner.nextLine();
+
+                if (!choise.equalsIgnoreCase("y")){
+                    System.out.println("Отмена операции удаления");
+                    return;
+                }
+
                 world.countries.remove(country);
                 if (world.countries.get(uuid) == null){
                     System.out.println("Страна удалена: " + name);
@@ -624,6 +650,7 @@ public class Main {
 
     // Отображение списка
     private static void displayInfo(SourceType sourceType) {
+        System.out.println();
         switch (sourceType) {
             case Country -> System.out.println(world.getInfo());
             case Region -> {
@@ -642,6 +669,7 @@ public class Main {
     }
 
     private static <T extends SourceName> void previewList (SourceList<T> sourceList, String sourceName){
+        System.out.println();
         if (sourceList.ifEmpty()){
             System.out.println("Список пуст");
             return;
@@ -649,6 +677,8 @@ public class Main {
         System.out.println(sourceName + ":");
         System.out.println(sourceList.pointer());
     }
+
+
 }
 
 
