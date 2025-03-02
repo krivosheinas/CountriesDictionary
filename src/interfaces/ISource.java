@@ -5,4 +5,6 @@ public interface ISource {
 
     String packedStr();
 
+    String getName();
+
 }

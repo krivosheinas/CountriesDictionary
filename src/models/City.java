@@ -39,5 +39,9 @@ public class City extends SourceName {
 
     }
 
+    @Override
+    public String getName() {
+        return String.format("%s (%s)", name, "Город");
+    }
 
 }

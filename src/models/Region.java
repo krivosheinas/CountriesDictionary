@@ -42,5 +42,10 @@ public class Region extends SourceName {
 
     }
 
+    @Override
+    public String getName() {
+        return String.format("%s (%s)", name, "Регион");
+    }
+
 
 }

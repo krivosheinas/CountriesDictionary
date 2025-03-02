@@ -15,4 +15,6 @@ public class SourceName implements ISource {
     public String packedStr() {
         return null;
     }
+
+    public String getName() { return null; }
 }

@@ -6,6 +6,7 @@ import extensions.SourceName;
 import models.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -162,7 +163,7 @@ public class Main {
         System.out.println("1. Добавить страну");
         System.out.println("2. Редактировать страну");
         System.out.println("3. Удалить страну");
-        System.out.println("4. Найти");
+        System.out.println("4. Поиск");
         System.out.println("5. Показать список стран");
         System.out.println("6. Показать детализированную информацию по странам и регионам");
         System.out.println("7. Выполнить запись данных в файловое хранилище");
@@ -186,7 +187,7 @@ public class Main {
                     case 1 -> addCountry();
                     case 2 -> editCountry();
                     case 3 -> removeCountry();
-                    case 4 -> searchCountry();
+                    case 4 -> deepSearch();
                     case 5 -> displayPreview(SourceType.Country);
                     case 6 -> displayInfo(SourceType.Country);
                     case 7 -> saveAllToFileStorage();
@@ -383,6 +384,9 @@ public class Main {
         String item = scanner.nextLine();
         try{
             var index = Integer.parseInt(item);
+            if (index <=0 || index > countryPointer.regions.all().size()){
+                throw new Exception("Не существующий индекс");
+            }
             index--;
             var region = countryPointer.regions.get(index);
             if (region != null){
@@ -416,30 +420,19 @@ public class Main {
 
         try{
             var index = Integer.parseInt(item);
+            if (index <=0 || index > regionPointer.cities.all().size()){
+                throw new Exception("Не существующий индекс");
+            }
             index--;
             var city = regionPointer.cities.get(index);
             if (city != null){
-                System.out.print("Введите новое название города: ");
-                String newName = scanner.nextLine();
-                var newPopulation = 0;
-                while (true){
-                    System.out.print("Введите численность населения: ");
-                    try{
-
-                        newPopulation = scanner.nextInt();
-                        break;
-                    }catch (Exception e){
-                        System.out.println("Введено некорректное значение");
-                        scanner.nextLine();
-                    }
-                }
-                city.Edit(newName,newPopulation);
+                changeCity(city);
             }else{
                 System.out.println("Не удалось определить город");
             }
 
         } catch (Exception e){
-            System.out.println("Ошибка удаления: " + e.getMessage());
+            System.out.println("Ошибка редактирования: " + e.getMessage());
         }
     }
 
@@ -462,6 +455,10 @@ public class Main {
 
         try{
             var index = Integer.parseInt(item);
+
+            if (index <=0 || index > regionPointer.cities.all().size()){
+                throw new Exception("Не существующий индекс");
+            }
             index--;
             var city = regionPointer.cities.get(index);
             if (city != null){
@@ -504,6 +501,10 @@ public class Main {
         String item = scanner.nextLine();
         try{
             var index = Integer.parseInt(item);
+            if (index <=0 || index > countryPointer.regions.all().size()){
+                throw new Exception("Не существующий индекс");
+            }
+
             index--;
             var region = countryPointer.regions.get(index);
             if (region != null){
@@ -551,6 +552,23 @@ public class Main {
         System.out.println("Новое название страны: " + item);
     }
 
+    private static void changeCity (City city){
+        System.out.print("Введите новое название города: ");
+        String newName = scanner.nextLine();
+        var newPopulation = 0;
+        while (true){
+            System.out.print("Введите численность населения: ");
+            try{
+                newPopulation = scanner.nextInt();
+                break;
+            }catch (Exception e){
+                System.out.println("Введено некорректное значение");
+                scanner.nextLine();
+            }
+        }
+       city.Edit(newName, newPopulation);
+    }
+
     /**
      * Комплексное редактирование Страны
      */
@@ -563,6 +581,10 @@ public class Main {
         String item = scanner.nextLine();
         try{
             var index = Integer.parseInt(item);
+            if (index <=0 || index > world.countries.all().size()){
+                throw new Exception("Не существующий индекс");
+            }
+
             index--;
             var country = world.countries.get(index);
             if (country != null){
@@ -588,6 +610,9 @@ public class Main {
         String item = scanner.nextLine();
         try{
             var index = Integer.parseInt(item);
+            if (index <=0 || index > world.countries.all().size()){
+                throw new Exception("Не существующий индекс");
+            }
             index--;
             var country = world.countries.get(index);
             if (country != null){
@@ -617,16 +642,73 @@ public class Main {
     /**
      * Поиск стран
      */
-    private static void searchCountry() {
+    private static void deepSearch() {
+        if (world.countries.ifEmpty()) {
+            System.out.println("Нет данных");
+            return;
+        }
+
+        var founders = new ArrayList<Founder>();
         System.out.print("Введите элемент для поиска: ");
         String item = scanner.nextLine();
-        var founded = world.countries.find(item);
-        System.out.println("Результат поиска:");
-        if (founded.all().isEmpty()){
-            System.out.println("Ничего не найдено");
-        }else {
-                System.out.println(founded.pointer());
+        //Выполняем поиск среди всех Стран
+        var founded_countries = world.countries.find(item);
+        founded_countries.all().forEach( country -> founders.add(new Founder(country, SourceType.Country)));
+
+        //Поиск среди Регионов всех Стран
+        for (var country: world.countries.all()){
+            var founded_regions = country.regions.find(item);
+            founded_regions.all().forEach( region -> founders.add(new Founder(region, SourceType.Region, country.getName())));
+
+            //Выполняем поиск среди Городов всех Регионов
+            for (var region: country.regions.all()){
+                var founded_cities = region.cities.find(item);
+                founded_cities.all().forEach( city -> founders.add(new Founder(city, SourceType.City,
+                       region.getName(), country.getName())));
+            }
         }
+
+        System.out.println("Результат поиска:");
+        if (founders.isEmpty()) {
+            System.out.println("Ничего не найдено");
+        } else {
+            var index = 0;
+            for (var founder: founders){
+                index++;
+                System.out.print(String.format("%s. %s", index, founder.source.getName()));
+                for (var level : founder.levels)
+                {
+                   System.out.print(String.format(" -> %s", level));
+                }
+                System.out.println();
+            }
+            System.out.print("Введите номер для входа в режим редактирования, иначе - Отмена: ");
+            String choice = scanner.nextLine();
+            try {
+                var number = Integer.parseInt(choice);
+                if (number <= 0 || number > founders.size()) {
+                    throw new Exception("Неверный диарпазон");
+                }
+                var selected = founders.get(number-1);
+                switch (selected.sourceType){
+                    case Country -> {
+                            countryPointer = (Country) selected.source;
+                            regionActions();
+                    }
+                    case Region -> {
+                        regionPointer = (Region) selected.source;
+                        cityActions();
+                    }
+                    case City -> {
+                        changeCity((City) selected.source);
+                    }
+                }
+            }catch (Exception e) {
+                System.out.println("Отмена");
+            }
+        }
+
+
     }
 
 

@@ -41,4 +41,9 @@ public class Country extends SourceName {
 
     }
 
+    @Override
+    public String getName() {
+        return String.format("%s (%s)", name, "Страна");
+    }
+
 }

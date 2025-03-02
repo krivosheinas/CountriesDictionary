@@ -25,4 +25,9 @@ public class World implements ISource {
 
     }
 
+    @Override
+    public String getName() {
+        return null;
+    }
+
 }
